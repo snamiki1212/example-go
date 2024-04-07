@@ -1,0 +1,5 @@
+# example-go
+
+## LICENSE
+
+MIT
