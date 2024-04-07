@@ -2,21 +2,36 @@ package main
 
 import "fmt"
 
+func main() {
+	var e Event
+
+	// create
+	e = Event{KindCreate, DataCreate{"id1", "nash"}}
+	e.Print()
+
+	// update
+	e = Event{KindUpdate, DataUpdate{"id1", "lunash"}}
+	e.Print()
+
+	// delete
+	e = Event{KindDelete, DataDelete{"id1"}}
+	e.Print()
+}
+
 type Event struct {
 	kind Kind
-	// data Data
+	data interface{}
 }
 
 type Data interface {
-	DataAdd | DataDelete | DataUpdate
-	String() string
+	DataCreate | DataDelete | DataUpdate
 }
 
 type DataDelete struct {
 	ID string
 }
 
-type DataAdd struct {
+type DataCreate struct {
 	ID   string
 	Name string
 }
@@ -39,26 +54,7 @@ const (
 	KindDelete Kind = "delete"
 )
 
-// func (d *Data) String() string {
-// 	return ""
-// }
-
 func (e *Event) Print() error {
 	_, error := fmt.Println("e is %+w", e)
 	return error
-}
-
-func main() {
-	var e Event
-	// create
-	e = Event{KindCreate}
-	e.Print()
-
-	// update
-	e = Event{KindUpdate}
-	e.Print()
-
-	// delete
-	e = Event{KindDelete}
-	e.Print()
 }
