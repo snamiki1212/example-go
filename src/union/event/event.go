@@ -16,7 +16,8 @@ const (
 )
 
 type Data interface {
-	// guard method to constraint for only specific struct.
+	// guard method to only allow specific struct
+	// - all struct would match `interface{}` so need guard method.
 	_isData()
 }
 
