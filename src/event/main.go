@@ -1,60 +1,23 @@
 package main
 
-import "fmt"
+import "event/event"
 
 func main() {
-	var e Event
+	var e *event.Event
+	var d event.Data
 
 	// create
-	e = Event{KindCreate, DataCreate{"id1", "nash"}}
+	d = &event.DataCreate{ID: "id1", Name: "nash"}
+	e = &event.Event{Kind: event.KindCreate, Data: d}
 	e.Print()
 
 	// update
-	e = Event{KindUpdate, DataUpdate{"id1", "lunash"}}
+	d = &event.DataUpdate{ID: "id1", Name: "lunash"}
+	e = &event.Event{Kind: event.KindUpdate, Data: d}
 	e.Print()
 
 	// delete
-	e = Event{KindDelete, DataDelete{"id1"}}
+	d = &event.DataDelete{ID: "id1"}
+	e = &event.Event{Kind: event.KindDelete, Data: d}
 	e.Print()
-}
-
-type Event struct {
-	kind Kind
-	data interface{}
-}
-
-type Data interface {
-	DataCreate | DataDelete | DataUpdate
-}
-
-type DataDelete struct {
-	ID string
-}
-
-type DataCreate struct {
-	ID   string
-	Name string
-}
-
-type DataUpdate struct {
-	ID   string
-	Name string
-}
-
-type User struct {
-	ID   string
-	Name string
-}
-
-type Kind string
-
-const (
-	KindCreate Kind = "add"
-	KindUpdate Kind = "udate"
-	KindDelete Kind = "delete"
-)
-
-func (e *Event) Print() error {
-	_, error := fmt.Println("e is %+w", e)
-	return error
 }
