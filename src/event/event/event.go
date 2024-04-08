@@ -45,7 +45,23 @@ type User struct {
 	Name string
 }
 
+// Print
+// - interface pattern
 func (e *Event) Print() error {
 	_, error := fmt.Println("e is %+w", e)
 	return error
+}
+
+// Print
+// - switch pattern
+func Print(e *Event) error {
+	switch d := e.Data.(type) {
+	case *DataCreate:
+		fmt.Println("--data-create %w / %w", d.ID, d.Name)
+	case *DataUpdate:
+		fmt.Println("--data-update %w / %w", d.ID, d.Name)
+	case *DataDelete:
+		fmt.Println("--data-delete %w", d.ID)
+	}
+	return nil
 }
