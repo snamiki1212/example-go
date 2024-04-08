@@ -16,28 +16,29 @@ const (
 )
 
 type Data interface {
-	IsData_()
+	// guard method to constraint for only specific struct.
+	_isData()
 }
 
 type DataDelete struct {
 	ID string
 }
 
-func (d *DataDelete) IsData_() {}
+func (d *DataDelete) _isData() {}
 
 type DataCreate struct {
 	ID   string
 	Name string
 }
 
-func (d *DataCreate) IsData_() {}
+func (d *DataCreate) _isData() {}
 
 type DataUpdate struct {
 	ID   string
 	Name string
 }
 
-func (d *DataUpdate) IsData_() {}
+func (d *DataUpdate) _isData() {}
 
 type User struct {
 	ID   string
