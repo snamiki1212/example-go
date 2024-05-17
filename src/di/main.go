@@ -6,8 +6,10 @@ import (
 )
 
 func main() {
-	service_a.Run(func() bool {
-		service_b.Run()
-		return true
+	service_a.Run(&service_a.RunReq{
+		OnStart: func() bool {
+			service_b.Run()
+			return true
+		},
 	})
 }

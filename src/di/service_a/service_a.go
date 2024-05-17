@@ -4,8 +4,11 @@ import (
 	"fmt"
 )
 
-func Run(onStart func() bool) {
-	onStart()
-
+func Run(req *RunReq) {
+	req.OnStart()
 	fmt.Println("service_a")
+}
+
+type RunReq struct {
+	OnStart func() bool
 }
