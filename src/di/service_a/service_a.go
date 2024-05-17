@@ -4,9 +4,13 @@ import (
 	"fmt"
 )
 
+func Echo() {
+	fmt.Println("echo service_a")
+}
+
 func Run(req *RunReq) {
 	req.OnStart()
-	fmt.Println("service_a")
+	Echo()
 }
 
 type RunReq struct {
