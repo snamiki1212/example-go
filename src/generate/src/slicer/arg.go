@@ -5,21 +5,27 @@ import (
 	"strings"
 )
 
-type Arg struct {
+type args struct {
 	// Target entity name
-	Entity string
+	entity string
 
 	// Target slice name
-	Slice string
+	slice string
 
-	// Exclude field names
-	Excludes []string
+	// Field names to exclude
+	fieldNamesToExclude []string
 }
 
-func newArg(rawArgs []string) Arg {
+func newArgs(rawArgs []string) args {
+	if isDebug {
+		return args{
+			entity:              "User",
+			slice:               "Users",
+			fieldNamesToExclude: []string{"Posts"},
+		}
+	}
 	pattern := `-(\w+)=(\w+)`
-
-	arg := Arg{}
+	arg := args{}
 	for _, rawarg := range rawArgs {
 		re := regexp.MustCompile(pattern)
 		matches := re.FindStringSubmatch(rawarg)
@@ -29,21 +35,21 @@ func newArg(rawArgs []string) Arg {
 		key, val := matches[1], matches[2]
 		switch key {
 		case "entity":
-			arg.Entity = val
+			arg.entity = val
 		case "slice":
-			arg.Slice = val
+			arg.slice = val
 		case "exclude":
-			arg.Excludes = strings.Split(val, ",")
+			arg.fieldNamesToExclude = strings.Split(val, ",")
 		}
 	}
 	return arg
 }
 
-func (a Arg) validate() bool {
-	if a.Entity == "" {
+func (a args) validate() bool {
+	if a.entity == "" {
 		return false
 	}
-	if a.Slice == "" {
+	if a.slice == "" {
 		return false
 	}
 	return true

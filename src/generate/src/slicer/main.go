@@ -19,13 +19,7 @@ const isDebug = true // TODO:
 
 func main() {
 	fmt.Println("this is slicer")
-	excludeFields := []string{"Posts"}
-	const entityName = "User"
-	const sliceName = "Users"
-
-	// args := os.Args
-
-	// sliceName := "Users"
+	arguments := newArgs(os.Args[1:]) // [0] is not args
 
 	// pwd
 	pwd := getPWD()
@@ -47,8 +41,9 @@ func main() {
 	var fields Fields
 	{
 		objs := node.Scope.Objects
-		obj, ok := objs[entityName]
+		obj, ok := objs[arguments.entity]
 		if !ok {
+			fmt.Println(os.Args)
 			panic("not found entity")
 		}
 
@@ -74,7 +69,7 @@ func main() {
 
 		fields = newFields(rawFields)
 		fmt.Println(fields)
-		fields = fields.exclude(excludeFields)
+		fields = fields.exclude(arguments.fieldNamesToExclude)
 		fmt.Println(fields)
 	}
 
@@ -102,7 +97,7 @@ func main() {
 		}
 		for _, f := range fields {
 			data := map[string]string{
-				"Slices": sliceName,
+				"Slices": arguments.slice,
 				"Method": NewMethodName(f.Name),
 				"Type":   f.Type,
 				"Field":  f.Name,
