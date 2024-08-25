@@ -7,7 +7,7 @@ type User struct {
 	Posts  Posts
 }
 
-//go:generate go run slicer
+//go:generate go run slicer -entity=User -slices=Users
 type Users []*User
 
 type Post struct {
