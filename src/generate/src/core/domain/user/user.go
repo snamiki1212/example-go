@@ -8,7 +8,7 @@ type User struct {
 	Posts  Posts
 }
 
-//go:generate go run slicer -entity=User -slices=Users
+//go:generate go run slicer -entity=User -slice=Users
 type Users []*User
 
 type Post struct {
@@ -16,12 +16,3 @@ type Post struct {
 }
 
 type Posts []*Post
-
-// // UserIDs
-// func (us Users) UserIDs() []string {
-// 	ids := make([]string, 0, len(us))
-// 	for i := range us {
-// 		ids = append(ids, us[i].UserID)
-// 	}
-// 	return ids
-// }
