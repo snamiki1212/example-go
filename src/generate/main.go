@@ -1,10 +1,7 @@
 package main
 
-import (
-	g "generate/domain/user/gen"
-)
+import "fmt"
 
-// run gen
 func main() {
-	g.Main()
+	fmt.Println(":d")
 }

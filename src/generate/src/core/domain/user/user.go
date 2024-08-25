@@ -6,6 +6,8 @@ type User struct {
 	Age    int64
 	Posts  Posts
 }
+
+//go:generate go run slicer
 type Users []*User
 
 type Post struct {
