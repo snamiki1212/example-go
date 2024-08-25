@@ -58,12 +58,6 @@ func main() {
 		decl := obj.Decl
 		fmt.Println(decl)
 
-		// switch de := decl.(type) {
-		// case *ast.TypeSpec:
-		// 	fmt.Println("TypeSpec", de)
-		// default:
-		// 	panic("invalid decl")
-		// }
 		entity, ok := decl.(*ast.TypeSpec)
 		if !ok {
 			panic("invalid decl")
@@ -111,9 +105,19 @@ type (
 )
 
 func newField(raw *ast.Field) Field {
+	name := raw.Names[0].Name
+	typeName := func() string {
+		switch tt := raw.Type.(type) {
+		case *ast.Ident:
+			return tt.Name
+		case *ast.StarExpr:
+			return "*" + tt.X.(*ast.Ident).Name
+		}
+		return "<invalid-type-name>"
+	}()
 	return Field{
-		Name: raw.Names[0].Name,
-		Type: raw.Type.(*ast.Ident).Name,
+		Name: name,
+		Type: typeName,
 	}
 }
 

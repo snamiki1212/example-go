@@ -4,6 +4,7 @@ type User struct {
 	UserID string
 	Name   string
 	Age    int64
+	PtrAge *int64
 	Posts  Posts
 }
 
