@@ -9,25 +9,28 @@ import (
 )
 
 const templatePath = "./accessor.tmpl"
-const inputPath = "./src/core/domain/user/user.go"
-const outputPath = "./src/core/domain/user/user.gen.go"
 const inputFile = "user.go"
 const outputFile = "user_gen.go"
+const debugPWD = "/Users/snamiki1212/ghq/github.com/snamiki1212/example-go/src/generate/src/core/domain/user"
 
 const isDebug = true // TODO:
 
 func main() {
-	arguments := newArgs(os.Args[1:]) // [0] is not args
+	pwd := getPWD()
+	in := pwd + "/" + inputFile
+	out := pwd + "/" + outputFile
+	doMain(in, out, os.Args[1:]) // [0] is not args
+}
+
+func doMain(in, out string, argParams []string) {
+	arguments := newArgs(argParams)
 	if !arguments.validate() {
 		panic("invalid args")
 	}
 
-	// pwd
-	pwd := getPWD()
-
 	// Ast
 	fset := token.NewFileSet()
-	node, err := parser.ParseFile(fset, pwd+"/"+inputFile, nil, parser.AllErrors)
+	node, err := parser.ParseFile(fset, in, nil, parser.AllErrors)
 	if err != nil {
 		panic(err)
 	}
@@ -67,7 +70,7 @@ func main() {
 	}
 
 	// Output file
-	output, err := os.Create(pwd + "/" + outputFile)
+	output, err := os.Create(out)
 	if err != nil {
 		panic(err)
 	}
@@ -105,7 +108,7 @@ func main() {
 
 func getPWD() string {
 	if isDebug {
-		return "/Users/snamiki1212/ghq/github.com/snamiki1212/example-go/src/generate/src/core/domain/user"
+		return debugPWD
 	}
 	pwd, err := os.Getwd()
 	if err != nil {
