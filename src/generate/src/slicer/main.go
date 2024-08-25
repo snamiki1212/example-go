@@ -6,9 +6,6 @@ import (
 	"go/parser"
 	"go/token"
 	"os"
-	"regexp"
-	"slices"
-	"strings"
 	"text/template"
 )
 
@@ -131,89 +128,4 @@ func getPWD() string {
 	}
 	fmt.Println(pwd)
 	return pwd
-}
-
-type (
-	Fields []Field
-	Field  struct {
-		Name string
-		Type string
-	}
-)
-
-func newField(raw *ast.Field) Field {
-	name := raw.Names[0].Name
-	typeName := func() string {
-		switch tt := raw.Type.(type) {
-		case *ast.Ident:
-			return tt.Name
-		case *ast.StarExpr:
-			return "*" + tt.X.(*ast.Ident).Name
-		}
-		return "<invalid-type-name>"
-	}()
-	return Field{
-		Name: name,
-		Type: typeName,
-	}
-}
-
-func newFields(raws []*ast.Field) Fields {
-	fields := make(Fields, 0, len(raws))
-	for _, raw := range raws {
-		fields = append(fields, newField(raw))
-	}
-	return fields
-}
-
-func (fs Fields) exclude(targets []string) Fields {
-	return slices.DeleteFunc(fs, func(f Field) bool {
-		return slices.Contains(targets, f.Name)
-	})
-}
-
-func NewMethodName(fieldName string) string { return fieldName + "s" }
-
-type Arg struct {
-	// Target entity name
-	Entity string
-
-	// Target slice name
-	Slice string
-
-	// Exclude field names
-	Excludes []string
-}
-
-func newArg(rawArgs []string) Arg {
-	pattern := `-(\w+)=(\w+)`
-
-	arg := Arg{}
-	for _, rawarg := range rawArgs {
-		re := regexp.MustCompile(pattern)
-		matches := re.FindStringSubmatch(rawarg)
-		if len(matches) != 2 {
-			panic("invalid arg: " + rawarg)
-		}
-		key, val := matches[1], matches[2]
-		switch key {
-		case "entity":
-			arg.Entity = val
-		case "slice":
-			arg.Slice = val
-		case "exclude":
-			arg.Excludes = strings.Split(val, ",")
-		}
-	}
-	return arg
-}
-
-func (a Arg) validate() bool {
-	if a.Entity == "" {
-		return false
-	}
-	if a.Slice == "" {
-		return false
-	}
-	return true
 }
