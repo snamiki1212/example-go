@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -18,7 +17,6 @@ const outputFile = "user_gen.go"
 const isDebug = true // TODO:
 
 func main() {
-	fmt.Println("this is slicer")
 	arguments := newArgs(os.Args[1:]) // [0] is not args
 
 	// pwd
@@ -30,9 +28,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	if isDebug {
-		ast.Print(fset, node) // for debug
-	}
+	// if isDebug {
+	// 	ast.Print(fset, node) // for debug
+	// }
 
 	// get package name
 	pkgName := node.Name.Name
@@ -43,20 +41,15 @@ func main() {
 		objs := node.Scope.Objects
 		obj, ok := objs[arguments.entity]
 		if !ok {
-			fmt.Println(os.Args)
 			panic("not found entity")
 		}
 
-		fmt.Println(obj.Name)
-		fmt.Println(obj.Kind)
 		decl := obj.Decl
-		fmt.Println(decl)
 
 		entity, ok := decl.(*ast.TypeSpec)
 		if !ok {
 			panic("invalid decl")
 		}
-		fmt.Println(entity)
 		ty := entity.Type
 
 		// https://stackoverflow.com/questions/20234342/get-a-simple-string-representation-of-a-struct-field-s-type
@@ -65,12 +58,9 @@ func main() {
 			panic("invalid type")
 		}
 		rawFields := sty.Fields.List
-		fmt.Println(rawFields)
 
 		fields = newFields(rawFields)
-		fmt.Println(fields)
 		fields = fields.exclude(arguments.fieldNamesToExclude)
-		fmt.Println(fields)
 	}
 
 	// Output file
@@ -108,9 +98,6 @@ func main() {
 			}
 		}
 	}
-	// DEBUG
-	fmt.Println(":D")
-
 }
 
 func getPWD() string {
@@ -121,6 +108,5 @@ func getPWD() string {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(pwd)
 	return pwd
 }
