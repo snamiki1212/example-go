@@ -1,4 +1,4 @@
-package main
+package gen
 
 //go:generate go run ./gen.go
 import (
@@ -7,10 +7,16 @@ import (
 	"os"
 )
 
+const templatePath = "domain/user/gen/getter.tmpl"
+const outputPath = "domain/user/user.gen.go"
+
 func main() {
 	// inputPath := "../user.go"
-	templatePath := "./getter.tmpl"
-	outputPath := "../user.gen.go"
+	path, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(path)
 	file, err := os.Create(outputPath)
 	if err != nil {
 		panic(err)
@@ -25,4 +31,8 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("generate!!!")
+}
+
+func Main() {
+	main()
 }
