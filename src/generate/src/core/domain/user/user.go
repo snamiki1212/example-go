@@ -17,11 +17,11 @@ type Post struct {
 
 type Posts []*Post
 
-// UserIDs
-func (us Users) UserIDs() []string {
-	ids := make([]string, 0, len(us))
-	for i := range us {
-		ids = append(ids, us[i].UserID)
-	}
-	return ids
-}
+// // UserIDs
+// func (us Users) UserIDs() []string {
+// 	ids := make([]string, 0, len(us))
+// 	for i := range us {
+// 		ids = append(ids, us[i].UserID)
+// 	}
+// 	return ids
+// }
