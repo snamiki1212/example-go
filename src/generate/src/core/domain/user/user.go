@@ -8,7 +8,7 @@ type User struct {
 	Posts  Posts
 }
 
-//go:generate go run slicer -entity=User -slice=Users
+//go:generate go run slice_accessor -entity=User -slice=Users
 type Users []*User
 
 type Post struct {
