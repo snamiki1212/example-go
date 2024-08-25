@@ -18,6 +18,9 @@ const isDebug = true // TODO:
 
 func main() {
 	arguments := newArgs(os.Args[1:]) // [0] is not args
+	if !arguments.validate() {
+		panic("invalid args")
+	}
 
 	// pwd
 	pwd := getPWD()
