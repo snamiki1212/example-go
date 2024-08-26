@@ -29,6 +29,8 @@ func newArgs(rawArgs []string) args {
 			entity:              "User",
 			slice:               "Users",
 			fieldNamesToExclude: []string{"Posts"},
+			input:               "user.go",
+			output:              "user_gen.go",
 		}
 	}
 	pattern := `-(\w+)=(\w+)`

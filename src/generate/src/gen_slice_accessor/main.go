@@ -21,16 +21,10 @@ func (xs {{ .Slices }}) {{ .Method }}() []{{ .Type }} {
 `
 
 func main() {
-	pwd := "."
-	const inputFile = "user.go"
-	const outputFile = "user_gen.go"
-
 	arguments := newArgs(os.Args[1:]) // [0] is not args
 	if !arguments.validate() {
 		panic("invalid args")
 	}
-	arguments.input = pwd + "/" + inputFile
-	arguments.output = pwd + "/" + outputFile
 	doMain(arguments)
 }
 
