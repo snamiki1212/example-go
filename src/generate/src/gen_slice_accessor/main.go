@@ -27,9 +27,6 @@ func doMain(arguments args) {
 	if err != nil {
 		panic(err)
 	}
-	// if isDebug {
-	// 	ast.Print(fset, node) // for debug
-	// }
 
 	// get package name
 	pkgName := node.Name.Name
