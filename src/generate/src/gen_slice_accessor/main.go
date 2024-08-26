@@ -99,11 +99,11 @@ func doMain(in, out string, argParams []string) {
 				panic(err)
 			}
 			for _, f := range fields {
-				data := map[string]string{
-					"Slices": arguments.slice,
-					"Method": NewMethodName(f.Name),
-					"Type":   f.Type,
-					"Field":  f.Name,
+				data := &TemplateMapper{
+					Slices: arguments.slice,
+					Method: NewMethodName(f.Name),
+					Type:   f.Type,
+					Field:  f.Name,
 				}
 
 				err = tp.Execute(&doc, data)
@@ -128,6 +128,14 @@ func doMain(in, out string, argParams []string) {
 			panic(err)
 		}
 	}
+}
+
+// Replace variable from key to value in template.
+type TemplateMapper struct {
+	Slices string
+	Method string
+	Type   string
+	Field  string
 }
 
 func getPWD() string {
