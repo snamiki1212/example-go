@@ -2,6 +2,7 @@
 
 package user
 
+
 // UserIDs
 func (xs Users) UserIDs() []string {
 	sli := make([]string, 0, len(xs))
@@ -46,4 +47,3 @@ func (xs Users) Posts2s() []Posts {
 	}
 	return sli
 }
-

@@ -9,8 +9,18 @@ import (
 	"text/template"
 )
 
-const templatePath = "./accessor.tmpl"
+// const templatePath = "./accessor.tmpl"
 const debugPWD = "/Users/snamiki1212/ghq/github.com/snamiki1212/example-go/src/generate/src/core/domain/user"
+const templateBody = `
+// {{ .Method }}
+func (xs {{ .Slices }}) {{ .Method }}() []{{ .Type }} {
+	sli := make([]{{ .Type }}, 0, len(xs))
+	for i := range xs {
+		sli = append(sli, xs[i].{{ .Field }})
+	}
+	return sli
+}
+`
 
 const isDebug = true // TODO:
 
@@ -84,7 +94,7 @@ func doMain(in, out string, argParams []string) {
 		// append templates
 		{
 			var doc bytes.Buffer
-			tp, err := template.ParseFiles(templatePath)
+			tp, err := template.New("").Parse(templateBody)
 			if err != nil {
 				panic(err)
 			}
