@@ -7,7 +7,7 @@ import (
 
 const templateBody = `
 // {{ .Method }}
-func (xs {{ .Slices }}) {{ .Method }}() []{{ .Type }} {
+func (xs {{ .Slice }}) {{ .Method }}() []{{ .Type }} {
 	sli := make([]{{ .Type }}, 0, len(xs))
 	for i := range xs {
 		sli = append(sli, xs[i].{{ .Field }})
@@ -18,7 +18,7 @@ func (xs {{ .Slices }}) {{ .Method }}() []{{ .Type }} {
 
 // Replace variable from key to value in template.
 type TemplateMapper struct {
-	Slices string
+	Slice  string
 	Method string
 	Type   string
 	Field  string
@@ -39,7 +39,7 @@ func generate(pkgName string, sliceName string, fields Fields) string {
 	}
 	for _, f := range fields {
 		data := &TemplateMapper{
-			Slices: sliceName,
+			Slice:  sliceName,
 			Method: NewMethodName(f.Name),
 			Type:   f.Type,
 			Field:  f.Name,
