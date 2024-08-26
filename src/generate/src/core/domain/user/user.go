@@ -9,7 +9,7 @@ type User struct {
 	Posts2 Posts
 }
 
-//go:generate go run slice_accessor -entity=User -slice=Users -exclude=Posts,Posts2
+//go:generate go run gen_slice_accessor -entity=User -slice=Users -exclude=Posts,Posts2 -in=user.go -out=user_gen.go
 type Users []*User
 
 type Post struct {
