@@ -9,17 +9,6 @@ import (
 	"text/template"
 )
 
-const templateBody = `
-// {{ .Method }}
-func (xs {{ .Slices }}) {{ .Method }}() []{{ .Type }} {
-	sli := make([]{{ .Type }}, 0, len(xs))
-	for i := range xs {
-		sli = append(sli, xs[i].{{ .Field }})
-	}
-	return sli
-}
-`
-
 func main() {
 	arguments := newArgs(os.Args[1:]) // [0] is not args
 	if !arguments.validate() {
@@ -106,25 +95,20 @@ func doMain(arguments args) {
 		}
 	}
 
-	{
-		// Write to output file
-		output, err := os.Create(arguments.output)
-		if err != nil {
-			panic(err)
-		}
-		defer output.Close()
-
-		_, err = output.WriteString(txt)
-		if err != nil {
-			panic(err)
-		}
-	}
+	// Write to output file
+	write(arguments.output, txt)
 }
 
-// Replace variable from key to value in template.
-type TemplateMapper struct {
-	Slices string
-	Method string
-	Type   string
-	Field  string
+// Write to output file
+func write(path, txt string) {
+	file, err := os.Create(path)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(txt)
+	if err != nil {
+		panic(err)
+	}
 }
