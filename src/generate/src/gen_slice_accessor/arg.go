@@ -18,7 +18,7 @@ type args struct {
 
 // TODO: Use flag package instead of own logic
 func newArgs(rawArgs []string) args {
-	if isDebug {
+	if true { // TODO:
 		return args{
 			entity:              "User",
 			slice:               "Users",
