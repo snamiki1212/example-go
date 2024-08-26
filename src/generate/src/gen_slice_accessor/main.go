@@ -24,24 +24,25 @@ func main() {
 	pwd := "."
 	const inputFile = "user.go"
 	const outputFile = "user_gen.go"
-	in := pwd + "/" + inputFile
-	out := pwd + "/" + outputFile
-	doMain(in, out, os.Args[1:]) // [0] is not args
+
+	arguments := newArgs(os.Args[1:]) // [0] is not args
+	if !arguments.validate() {
+		panic("invalid args")
+	}
+	arguments.input = pwd + "/" + inputFile
+	arguments.output = pwd + "/" + outputFile
+	doMain(arguments)
 }
 
 // 1. Handle request
 // 2. Get ast and new field from src
 // 3. Create output / resolve template
 
-func doMain(in, out string, argParams []string) {
-	arguments := newArgs(argParams)
-	if !arguments.validate() {
-		panic("invalid args")
-	}
+func doMain(arguments args) {
 
 	// Ast
 	fset := token.NewFileSet()
-	node, err := parser.ParseFile(fset, in, nil, parser.AllErrors)
+	node, err := parser.ParseFile(fset, arguments.input, nil, parser.AllErrors)
 	if err != nil {
 		panic(err)
 	}
@@ -113,7 +114,7 @@ func doMain(in, out string, argParams []string) {
 
 	{
 		// Write to output file
-		output, err := os.Create(out)
+		output, err := os.Create(arguments.output)
 		if err != nil {
 			panic(err)
 		}

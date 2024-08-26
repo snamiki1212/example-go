@@ -14,6 +14,12 @@ type args struct {
 
 	// Field names to exclude
 	fieldNamesToExclude []string
+
+	// Input file name
+	input string
+
+	// Output file name
+	output string
 }
 
 // TODO: Use flag package instead of own logic
