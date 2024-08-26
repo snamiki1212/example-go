@@ -1,9 +1,0 @@
-// {{ .Method }}
-func (xs {{ .Slices }}) {{ .Method }}() []{{ .Type }} {
-	sli := make([]{{ .Type }}, 0, len(xs))
-	for i := range xs {
-		sli = append(sli, xs[i].{{ .Field }})
-	}
-	return sli
-}
-

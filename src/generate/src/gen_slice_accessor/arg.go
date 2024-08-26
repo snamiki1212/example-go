@@ -16,6 +16,7 @@ type args struct {
 	fieldNamesToExclude []string
 }
 
+// TODO: Use flag package instead of own logic
 func newArgs(rawArgs []string) args {
 	if isDebug {
 		return args{
