@@ -9,18 +9,22 @@ import (
 )
 
 const templatePath = "./accessor.tmpl"
-const inputFile = "user.go"
-const outputFile = "user_gen.go"
 const debugPWD = "/Users/snamiki1212/ghq/github.com/snamiki1212/example-go/src/generate/src/core/domain/user"
 
 const isDebug = true // TODO:
 
 func main() {
 	pwd := getPWD()
+	const inputFile = "user.go"
+	const outputFile = "user_gen.go"
 	in := pwd + "/" + inputFile
 	out := pwd + "/" + outputFile
 	doMain(in, out, os.Args[1:]) // [0] is not args
 }
+
+// 1. Handle request
+// 2. Get ast and new field from src
+// 3. Create output / resolve template
 
 func doMain(in, out string, argParams []string) {
 	arguments := newArgs(argParams)

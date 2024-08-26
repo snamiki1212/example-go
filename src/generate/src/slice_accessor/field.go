@@ -7,7 +7,9 @@ import (
 
 type (
 	Fields []Field
-	Field  struct {
+
+	// Struct field from entity in source code
+	Field struct {
 		Name string
 		Type string
 	}

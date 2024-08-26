@@ -38,3 +38,12 @@ func (xs Users) PtrAges() []*int64 {
 	return sli
 }
 
+// Posts2s
+func (xs Users) Posts2s() []Posts {
+	sli := make([]Posts, 0, len(xs))
+	for i := range xs {
+		sli = append(sli, xs[i].Posts2)
+	}
+	return sli
+}
+

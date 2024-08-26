@@ -6,9 +6,10 @@ type User struct {
 	Age    int64
 	PtrAge *int64
 	Posts  Posts
+	Posts2 Posts
 }
 
-//go:generate go run slice_accessor -entity=User -slice=Users
+//go:generate go run slice_accessor -entity=User -slice=Users -exclude=Posts,Posts2
 type Users []*User
 
 type Post struct {
