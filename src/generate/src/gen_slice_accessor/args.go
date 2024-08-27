@@ -59,11 +59,15 @@ func newArgs(rawArgs []string) (arguments, error) {
 }
 
 func (a arguments) validate() error {
+	var container []error
 	if a.entity == "" {
-		return fmt.Errorf("entity is required")
+		container = append(container, fmt.Errorf("entity is required"))
 	}
 	if a.slice == "" {
-		return fmt.Errorf("slice is required")
+		container = append(container, fmt.Errorf("slice is required"))
+	}
+	if len(container) > 0 {
+		return fmt.Errorf("invalid arguments: %v", container)
 	}
 	return nil
 }
