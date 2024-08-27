@@ -5,10 +5,10 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"slices"
 )
 
-// Parse sorce code.
-// [flow] srcCode -> Ast -> data
+// Parse sorce code to own struct.
 func parse(args arguments) (data, error) {
 	fset := token.NewFileSet()
 
@@ -19,16 +19,16 @@ func parse(args arguments) (data, error) {
 	}
 
 	// Parse ast
-	fields, err := doParse(node, args)
+	astFs, err := doParse(node, args)
 	if err != nil {
 		return data{}, err
 	}
 
 	// Convert ast to own struct
-	infos := newInfos(fields).exclude(args.fieldNamesToExclude)
+	fs := newFields(astFs).exclude(args.fieldNamesToExclude)
 
 	return data{
-		infos:     infos,
+		fields:    fs,
 		pkgName:   getPackageName(node),
 		sliceName: args.slice,
 	}, nil
@@ -57,6 +57,59 @@ func doParse(node *ast.File, args arguments) ([]*ast.Field, error) {
 	if !ok {
 		return nil, fmt.Errorf("invalid type: %T", ty)
 	}
-	fields := sty.Fields.List
-	return fields, nil
+	fs := sty.Fields.List
+	return fs, nil
 }
+
+type (
+	// Data from parsed source code and will be used in code generation.
+	data struct {
+		fields    fields
+		pkgName   string
+		sliceName string
+	}
+	fields []field
+
+	// Struct field from entity in source code.
+	field struct {
+		Name string // field name
+		Type string // field type like string,int64...
+	}
+)
+
+// Constructor for field.
+func newField(raw *ast.Field) field {
+	name := raw.Names[0].Name
+	typeName := func() string {
+		switch tt := raw.Type.(type) {
+		case *ast.Ident:
+			return tt.Name
+		case *ast.StarExpr:
+			return "*" + tt.X.(*ast.Ident).Name
+		}
+		return "<invalid-type-name>"
+	}()
+	return field{
+		Name: name,
+		Type: typeName,
+	}
+}
+
+// Constructor for fields.
+func newFields(raws []*ast.Field) fields {
+	fs := make(fields, 0, len(raws))
+	for _, raw := range raws {
+		fs = append(fs, newField(raw))
+	}
+	return fs
+}
+
+// Exclude fields by name.
+func (fs fields) exclude(targets []string) fields {
+	return slices.DeleteFunc(fs, func(f field) bool {
+		return slices.Contains(targets, f.Name)
+	})
+}
+
+// Constructor for method name.
+func newMethodName(name string) string { return name + "s" }

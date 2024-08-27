@@ -29,7 +29,7 @@ type templateMapper struct {
 func generate(data data) (string, error) {
 	pkgName := data.pkgName
 	sliceName := data.sliceName
-	infos := data.infos
+	infos := data.fields
 	var txt string
 
 	// Append header
