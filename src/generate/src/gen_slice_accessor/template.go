@@ -24,7 +24,10 @@ type TemplateMapper struct {
 	Field  string
 }
 
-func generate(pkgName string, sliceName string, fields Fields) string {
+func generate(data data) string {
+	pkgName := data.pkgName
+	sliceName := data.sliceName
+	infos := data.infos
 	var txt string
 
 	// Append header
@@ -37,12 +40,12 @@ func generate(pkgName string, sliceName string, fields Fields) string {
 	if err != nil {
 		panic(err)
 	}
-	for _, f := range fields {
+	for _, info := range infos {
 		data := &TemplateMapper{
 			Slice:  sliceName,
-			Method: NewMethodName(f.Name),
-			Type:   f.Type,
-			Field:  f.Name,
+			Method: NewMethodName(info.Name),
+			Type:   info.Type,
+			Field:  info.Name,
 		}
 
 		err = tp.Execute(&doc, data)

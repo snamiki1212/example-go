@@ -6,16 +6,21 @@ import (
 )
 
 type (
-	Fields []Field
+	data struct {
+		infos     infos
+		pkgName   string
+		sliceName string
+	}
+	infos []info
 
 	// Struct field from entity in source code
-	Field struct {
+	info struct {
 		Name string
 		Type string
 	}
 )
 
-func newField(raw *ast.Field) Field {
+func newInfo(raw *ast.Field) info {
 	name := raw.Names[0].Name
 	typeName := func() string {
 		switch tt := raw.Type.(type) {
@@ -26,24 +31,24 @@ func newField(raw *ast.Field) Field {
 		}
 		return "<invalid-type-name>"
 	}()
-	return Field{
+	return info{
 		Name: name,
 		Type: typeName,
 	}
 }
 
-func newFields(raws []*ast.Field) Fields {
-	fields := make(Fields, 0, len(raws))
+func newInfos(raws []*ast.Field) infos {
+	fields := make(infos, 0, len(raws))
 	for _, raw := range raws {
-		fields = append(fields, newField(raw))
+		fields = append(fields, newInfo(raw))
 	}
 	return fields
 }
 
-func (fs Fields) exclude(targets []string) Fields {
-	return slices.DeleteFunc(fs, func(f Field) bool {
+func (fs infos) exclude(targets []string) infos {
+	return slices.DeleteFunc(fs, func(f info) bool {
 		return slices.Contains(targets, f.Name)
 	})
 }
 
-func NewMethodName(fieldName string) string { return fieldName + "s" }
+func NewMethodName(name string) string { return name + "s" }
