@@ -18,7 +18,10 @@ func main() {
 	}
 
 	// Generate code
-	txt := generate(data)
+	txt, err := generate(data)
+	if err != nil {
+		panic(err)
+	}
 
 	// Write to output file
 	if err := write(args.output, txt); err != nil {

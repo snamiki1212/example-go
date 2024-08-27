@@ -40,7 +40,7 @@ func newArgs(rawArgs []string) (arguments, error) {
 		re := regexp.MustCompile(pattern)
 		matches := re.FindStringSubmatch(rawarg)
 		if len(matches) != 2 {
-			panic("invalid arg: " + rawarg)
+			return arguments{}, fmt.Errorf("invalid arg: %s", rawarg)
 		}
 		key, val := matches[1], matches[2]
 		switch key {

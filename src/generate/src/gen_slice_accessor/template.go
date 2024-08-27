@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"text/template"
 )
 
@@ -24,7 +25,7 @@ type TemplateMapper struct {
 	Field  string
 }
 
-func generate(data data) string {
+func generate(data data) (string, error) {
 	pkgName := data.pkgName
 	sliceName := data.sliceName
 	infos := data.infos
@@ -38,7 +39,7 @@ func generate(data data) string {
 	var doc bytes.Buffer
 	tp, err := template.New("").Parse(templateBody)
 	if err != nil {
-		panic(err)
+		return "", fmt.Errorf("template parse error: %w", err)
 	}
 	for _, info := range infos {
 		data := &TemplateMapper{
@@ -50,9 +51,9 @@ func generate(data data) string {
 
 		err = tp.Execute(&doc, data)
 		if err != nil {
-			panic(err)
+			return "", fmt.Errorf("template execute error: %w", err)
 		}
 	}
 	txt += doc.String()
-	return txt
+	return txt, nil
 }
