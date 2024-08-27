@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-type args struct {
+type arguments struct {
 	// Target entity name
 	entity string
 
@@ -23,9 +23,9 @@ type args struct {
 }
 
 // TODO: Use flag package instead of own logic
-func newArgs(rawArgs []string) args {
+func newArgs(rawArgs []string) arguments {
 	if true { // TODO:
-		return args{
+		return arguments{
 			entity:              "User",
 			slice:               "Users",
 			fieldNamesToExclude: []string{"Posts"},
@@ -34,7 +34,7 @@ func newArgs(rawArgs []string) args {
 		}
 	}
 	pattern := `-(\w+)=(\w+)`
-	arg := args{}
+	args := arguments{}
 	for _, rawarg := range rawArgs {
 		re := regexp.MustCompile(pattern)
 		matches := re.FindStringSubmatch(rawarg)
@@ -44,17 +44,17 @@ func newArgs(rawArgs []string) args {
 		key, val := matches[1], matches[2]
 		switch key {
 		case "entity":
-			arg.entity = val
+			args.entity = val
 		case "slice":
-			arg.slice = val
+			args.slice = val
 		case "exclude":
-			arg.fieldNamesToExclude = strings.Split(val, ",")
+			args.fieldNamesToExclude = strings.Split(val, ",")
 		}
 	}
-	return arg
+	return args
 }
 
-func (a args) validate() bool {
+func (a arguments) validate() bool {
 	if a.entity == "" {
 		return false
 	}

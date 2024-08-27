@@ -5,22 +5,22 @@ import (
 )
 
 func main() {
-	arguments := newArgs(os.Args[1:]) // [0] is not args
-	if !arguments.validate() {
+	args := newArgs(os.Args[1:]) // [0] is not args
+	if !args.validate() {
 		panic("invalid args")
 	}
-	doMain(arguments)
+	doMain(args)
 }
 
-func doMain(arguments args) {
+func doMain(args arguments) {
 	// Parse source code
-	data := parse(arguments)
+	data := parse(args)
 
 	// Generate code
 	txt := generate(data)
 
 	// Write to output file
-	if err := write(arguments.output, txt); err != nil {
+	if err := write(args.output, txt); err != nil {
 		panic(err)
 	}
 }

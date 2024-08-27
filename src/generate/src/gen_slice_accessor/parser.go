@@ -6,10 +6,10 @@ import (
 	"go/token"
 )
 
-func parse(arguments args) data {
+func parse(args arguments) data {
 	// Ast
 	fset := token.NewFileSet()
-	node, err := parser.ParseFile(fset, arguments.input, nil, parser.AllErrors)
+	node, err := parser.ParseFile(fset, args.input, nil, parser.AllErrors)
 	if err != nil {
 		panic(err)
 	}
@@ -18,7 +18,7 @@ func parse(arguments args) data {
 	var fields infos
 	{
 		objs := node.Scope.Objects
-		obj, ok := objs[arguments.entity]
+		obj, ok := objs[args.entity]
 		if !ok {
 			panic("not found entity")
 		}
@@ -39,11 +39,11 @@ func parse(arguments args) data {
 		rawFields := sty.Fields.List
 
 		fields = newInfos(rawFields)
-		fields = fields.exclude(arguments.fieldNamesToExclude)
+		fields = fields.exclude(args.fieldNamesToExclude)
 	}
 	return data{
 		infos:     fields,
 		pkgName:   node.Name.Name, // get package name
-		sliceName: arguments.slice,
+		sliceName: args.slice,
 	}
 }
