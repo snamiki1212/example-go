@@ -12,7 +12,7 @@ func main() {
 	}
 
 	// Parse source code
-	data, err := parse(args)
+	data, err := parse(args, reader)
 	if err != nil {
 		panic(err)
 	}

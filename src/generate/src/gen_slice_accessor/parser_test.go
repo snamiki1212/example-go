@@ -15,9 +15,10 @@ func Test_parser(t *testing.T) {
 		arguments arguments
 	}
 	tests := []struct {
-		name string
-		args args
-		want fields
+		name    string
+		args    args
+		want    data
+		wantErr bool
 	}{
 		{
 			name: "ok",
@@ -35,31 +36,37 @@ type User struct {
 					output: "users_accessor_gen.go",
 				},
 			},
-			want: fields{
-				{
-					Name: "UserID",
-					Type: "string",
+			want: data{
+				fields: fields{
+					{
+						Name: "UserID",
+						Type: "string",
+					},
 				},
+				pkgName:   "user",
+				sliceName: "Users",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			node, err := ready(tt.args.src)
-			if err != nil {
-				assert.Fail(t, err.Error())
+			reader := newReaderFromString(tt.args.src)
+			got, err := parse(tt.args.arguments, reader)
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.want, got)
 			}
-			astFs, err := doParse(node, tt.args.arguments)
-			if err != nil {
-				assert.Fail(t, err.Error())
-			}
-			got := newFields(astFs).exclude(tt.args.arguments.fieldNamesToExclude)
-			assert.Equal(t, tt.want, got)
 		})
 	}
 }
 
-func ready(src string) (f *ast.File, err error) {
-	fset := token.NewFileSet()
-	return parser.ParseFile(fset, "", src, parser.AllErrors)
+// Construct reader from string.
+func newReaderFromString(src string) func(path string) (*ast.File, error) {
+	return func(path string) (*ast.File, error) {
+		fset := token.NewFileSet()
+		noFilePath := "" // not import from file path
+		return parser.ParseFile(fset, noFilePath, src, parser.AllErrors)
+	}
 }

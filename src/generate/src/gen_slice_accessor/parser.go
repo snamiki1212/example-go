@@ -10,11 +10,9 @@ import (
 )
 
 // Parse sorce code to own struct.
-func parse(args arguments) (data, error) {
-	fset := token.NewFileSet()
-
+func parse(args arguments, reader func(path string) (*ast.File, error)) (data, error) {
 	// Convert source code to ast
-	node, err := parser.ParseFile(fset, args.input, nil, parser.AllErrors)
+	node, err := reader(args.input)
 	if err != nil {
 		return data{}, fmt.Errorf("parse error: %w", err)
 	}
@@ -33,6 +31,12 @@ func parse(args arguments) (data, error) {
 		pkgName:   getPackageName(node),
 		sliceName: args.slice,
 	}, nil
+}
+
+// Read source code from file.
+func reader(path string) (*ast.File, error) {
+	fset := token.NewFileSet()
+	return parser.ParseFile(fset, path, nil, parser.AllErrors)
 }
 
 // Get package name.
