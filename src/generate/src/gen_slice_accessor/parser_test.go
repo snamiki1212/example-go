@@ -23,29 +23,81 @@ func Test_parser(t *testing.T) {
 		{
 			name: "ok",
 			args: args{
-				src: `package user
+				arguments: arguments{entity: "User", slice: "Users"},
+				src: `
+package user
+
+type User struct {
+	UserID string
+	Age    int64
+}
+`,
+			},
+			want: data{
+				pkgName:   "user",
+				sliceName: "Users",
+				fields:    fields{{Name: "UserID", Type: "string"}, {Name: "Age", Type: "int64"}},
+			},
+		},
+		{
+			name: "ok: exclude fields",
+			args: args{
+				arguments: arguments{entity: "User", slice: "Users", fieldNamesToExclude: []string{"Age"}},
+				src: `
+package user
+
+type User struct {
+	UserID string
+	Age    int64
+}
+`,
+			},
+			want: data{
+				pkgName:   "user",
+				sliceName: "Users",
+				fields:    fields{{Name: "UserID", Type: "string"}},
+			},
+		},
+		{
+			name: "ng: invalid src code: syntax error",
+			args: args{
+				arguments: arguments{entity: "User", slice: "Users"},
+				src: `
+package user
 
 type User struct {
 	UserID string
 }
+hogehoge // syntax error
 `,
-				arguments: arguments{
-					entity: "User",
-					slice:  "Users",
-					input:  "user.go",
-					output: "users_accessor_gen.go",
-				},
 			},
-			want: data{
-				fields: fields{
-					{
-						Name: "UserID",
-						Type: "string",
-					},
-				},
-				pkgName:   "user",
-				sliceName: "Users",
+			wantErr: true,
+		},
+		{
+			name: "ng: invalid src code: not found package name",
+			args: args{
+				arguments: arguments{entity: "User", slice: "Users"},
+				src: `
+// no package name
+type User struct {
+	UserID string
+}
+`,
 			},
+			wantErr: true,
+		},
+		{
+			name: "ng: invalid arguments: not found entity",
+			args: args{
+				arguments: arguments{entity: "INVALID_ENTITY", slice: "Users"},
+				src: `
+package user
+type User struct {
+	UserID string
+}
+`,
+			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
