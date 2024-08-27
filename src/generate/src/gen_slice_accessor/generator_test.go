@@ -17,7 +17,7 @@ func Test_generate(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "success",
+			name: "ok",
 			args: args{
 				data: data{
 					fields: fields{
@@ -56,6 +56,17 @@ func (xs Users) Ages() []int64 {
 	return sli
 }
 `,
+		},
+		{
+			name: "ok: empty",
+			args: args{
+				data: data{
+					fields:    fields{},
+					pkgName:   "user",
+					sliceName: "Users",
+				},
+			},
+			want: ``,
 		},
 	}
 	for _, tt := range tests {

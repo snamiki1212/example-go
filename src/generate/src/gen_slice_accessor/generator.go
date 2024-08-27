@@ -30,6 +30,11 @@ func generate(data data) (string, error) {
 	pkgName := data.pkgName
 	sliceName := data.sliceName
 	infos := data.fields
+
+	if len(infos) == 0 {
+		return "", nil
+	}
+
 	var txt string
 
 	// append header
