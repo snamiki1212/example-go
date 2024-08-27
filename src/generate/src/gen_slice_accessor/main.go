@@ -12,7 +12,10 @@ func main() {
 	}
 
 	// Parse source code
-	data := parse(args)
+	data, err := parse(args)
+	if err != nil {
+		panic(err)
+	}
 
 	// Generate code
 	txt := generate(data)
