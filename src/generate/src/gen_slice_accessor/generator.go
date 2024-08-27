@@ -25,6 +25,7 @@ type TemplateMapper struct {
 	Field  string
 }
 
+// Generate code
 func generate(data data) (string, error) {
 	pkgName := data.pkgName
 	sliceName := data.sliceName
