@@ -24,7 +24,8 @@ func main() {
 	}
 
 	// Write to output file
-	if err := write(args.output, txt); err != nil {
+	err = write(args.output, txt)
+	if err != nil {
 		panic(err)
 	}
 }
