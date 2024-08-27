@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -23,7 +24,7 @@ type arguments struct {
 }
 
 // TODO: Use flag package instead of own logic
-func newArgs(rawArgs []string) arguments {
+func newArgs(rawArgs []string) (arguments, error) {
 	if true { // TODO:
 		return arguments{
 			entity:              "User",
@@ -31,7 +32,7 @@ func newArgs(rawArgs []string) arguments {
 			fieldNamesToExclude: []string{"Posts"},
 			input:               "user.go",
 			output:              "user_gen.go",
-		}
+		}, nil
 	}
 	pattern := `-(\w+)=(\w+)`
 	args := arguments{}
@@ -51,15 +52,18 @@ func newArgs(rawArgs []string) arguments {
 			args.fieldNamesToExclude = strings.Split(val, ",")
 		}
 	}
-	return args
+	if err := args.validate(); err != nil {
+		return arguments{}, err
+	}
+	return args, nil
 }
 
-func (a arguments) validate() bool {
+func (a arguments) validate() error {
 	if a.entity == "" {
-		return false
+		return fmt.Errorf("entity is required")
 	}
 	if a.slice == "" {
-		return false
+		return fmt.Errorf("slice is required")
 	}
-	return true
+	return nil
 }

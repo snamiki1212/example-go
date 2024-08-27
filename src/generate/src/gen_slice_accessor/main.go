@@ -5,14 +5,12 @@ import (
 )
 
 func main() {
-	args := newArgs(os.Args[1:]) // [0] is not args
-	if !args.validate() {
-		panic("invalid args")
+	// Handle arguments
+	args, err := newArgs(os.Args[1:]) // [0] is not args
+	if err != nil {
+		panic(err)
 	}
-	doMain(args)
-}
 
-func doMain(args arguments) {
 	// Parse source code
 	data := parse(args)
 
