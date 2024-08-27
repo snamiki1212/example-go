@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"log"
 	"slices"
 )
 
@@ -87,7 +88,8 @@ func newField(raw *ast.Field) field {
 		case *ast.StarExpr:
 			return "*" + tt.X.(*ast.Ident).Name
 		}
-		return "<invalid-type-name>"
+		log.Println("parse error: unknown type")
+		return "any" // parse error
 	}()
 	return field{
 		Name: name,
