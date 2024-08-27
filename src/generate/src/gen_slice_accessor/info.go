@@ -51,4 +51,4 @@ func (fs infos) exclude(targets []string) infos {
 	})
 }
 
-func NewMethodName(name string) string { return name + "s" }
+func newMethodName(name string) string { return name + "s" }

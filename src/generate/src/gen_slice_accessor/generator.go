@@ -18,7 +18,7 @@ func (xs {{ .Slice }}) {{ .Method }}() []{{ .Type }} {
 `
 
 // Replace variable from key to value in template.
-type TemplateMapper struct {
+type templateMapper struct {
 	Slice  string
 	Method string
 	Type   string
@@ -43,9 +43,9 @@ func generate(data data) (string, error) {
 		return "", fmt.Errorf("template parse error: %w", err)
 	}
 	for _, info := range infos {
-		data := &TemplateMapper{
+		data := &templateMapper{
 			Slice:  sliceName,
-			Method: NewMethodName(info.Name),
+			Method: newMethodName(info.Name),
 			Type:   info.Type,
 			Field:  info.Name,
 		}
