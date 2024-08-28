@@ -118,4 +118,5 @@ func (fs fields) exclude(targets []string) fields {
 }
 
 // Constructor for method name.
+// TODO: use pluralize package: https://github.com/gertd/go-pluralize
 func newMethodName(name string) string { return name + "s" }

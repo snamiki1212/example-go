@@ -1,8 +1,8 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"regexp"
 	"strings"
 )
 
@@ -23,34 +23,22 @@ type arguments struct {
 	output string
 }
 
-// TODO: Use flag package instead of own logic
-func newArgs(rawArgs []string) (arguments, error) {
-	if true { // TODO:
-		return arguments{
-			entity:              "User",
-			slice:               "Users",
-			fieldNamesToExclude: []string{"Posts"},
-			input:               "user.go",
-			output:              "user_gen.go",
-		}, nil
-	}
-	pattern := `-(\w+)=(\w+)`
-	args := arguments{}
-	for _, rawarg := range rawArgs {
-		re := regexp.MustCompile(pattern)
-		matches := re.FindStringSubmatch(rawarg)
-		if len(matches) != 2 {
-			return arguments{}, fmt.Errorf("invalid arg: %s", rawarg)
-		}
-		key, val := matches[1], matches[2]
-		switch key {
-		case "entity":
-			args.entity = val
-		case "slice":
-			args.slice = val
-		case "exclude":
-			args.fieldNamesToExclude = strings.Split(val, ",")
-		}
+var (
+	entity              = flag.String("entity", "", "target entity name")
+	slice               = flag.String("slice", "", "target slice name")
+	fieldNamesToExclude = flag.String("exclude", "", "field names to exclude") // TODO: rename to ignore
+	input               = flag.String("in", "", "input file name")
+	output              = flag.String("out", "", "output file name")
+)
+
+func newArgs() (arguments, error) {
+	flag.Parse()
+	args := arguments{
+		entity:              *entity,
+		slice:               *slice,
+		fieldNamesToExclude: strings.Split(*fieldNamesToExclude, ","),
+		input:               *input,
+		output:              *output,
 	}
 	if err := args.validate(); err != nil {
 		return arguments{}, err

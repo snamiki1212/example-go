@@ -1,12 +1,8 @@
 package main
 
-import (
-	"os"
-)
-
 func main() {
 	// Handle arguments
-	args, err := newArgs(os.Args[1:]) // [0] is not args
+	args, err := newArgs()
 	if err != nil {
 		panic(err)
 	}
