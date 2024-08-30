@@ -30,8 +30,27 @@ package user
 type User struct {
 	UserID string
 	Age    int64
+}
+`,
+			},
+			want: data{
+				pkgName:   "user",
+				sliceName: "Users",
+				fields:    fields{{Name: "UserID", Type: "string"}, {Name: "Age", Type: "int64"}},
+			},
+		},
+		{
+			name: "ok: callback",
+			args: args{
+				arguments: arguments{entity: "User", slice: "Users"},
+				src: `
+package user
+
+type User struct {
 	callback1 func(x string, x2 bool) (y int64, y2 int32)
 	callback2 func(string, bool) (int64, int32)
+	callback3 func(u1 User) (u2 *User)
+	callback4 func(cb1 func(x1 string) (y1 int)) (cb2 func(x2 string) (y2 int))
 }
 `,
 			},
@@ -39,10 +58,10 @@ type User struct {
 				pkgName:   "user",
 				sliceName: "Users",
 				fields: fields{
-					{Name: "UserID", Type: "string"},
-					{Name: "Age", Type: "int64"},
 					{Name: "callback1", Type: "func(x string, x2 bool) (y int64, y2 int32)"},
 					{Name: "callback2", Type: "func(string, bool) (int64, int32)"},
+					{Name: "callback3", Type: "func(u1 User) (u2 *User)"},
+					{Name: "callback4", Type: "func(cb1 func(x1 string) (y1 int)) (cb2 func(x2 string) (y2 int))"},
 				},
 			},
 		},
@@ -109,9 +128,6 @@ type User struct {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.name != "ok" {
-				t.Skip()
-			}
 			reader := newReaderFromString(tt.args.src)
 			got, err := parse(tt.args.arguments, reader)
 			if tt.wantErr {
