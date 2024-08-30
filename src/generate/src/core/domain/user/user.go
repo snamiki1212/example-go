@@ -7,7 +7,7 @@ type User struct {
 	PtrAge   *int64
 	Posts    Posts
 	Posts2   Posts
-	callback func(string) string
+	callback func(x string) (y int64)
 }
 
 //go:generate go run gen_slice_accessor -entity=User -slice=Users -exclude=Posts,Posts2 -in=user.go -out=users_accessor_gen.go

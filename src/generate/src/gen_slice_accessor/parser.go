@@ -7,6 +7,7 @@ import (
 	"go/token"
 	"log"
 	"slices"
+	"strings"
 )
 
 // Parse sorce code to own struct.
@@ -91,6 +92,32 @@ func newField(raw *ast.Field) field {
 			return tt.Name
 		case *ast.StarExpr:
 			return "*" + tt.X.(*ast.Ident).Name
+		case *ast.FuncType:
+			args := func() string {
+				var pairs []string
+				for _, p := range tt.Params.List {
+					x := p.Names[0].Name
+					ty := p.Type.(*ast.Ident).Name
+					pairs = append(pairs, fmt.Sprintf("%s %s", x, ty))
+				}
+				if len(pairs) == 0 {
+					return ""
+				}
+				return strings.Join(pairs, ", ")
+			}()
+			result := func() string {
+				var pairs []string
+				for _, p := range tt.Results.List {
+					x := p.Names[0].Name
+					ty := p.Type.(*ast.Ident).Name
+					pairs = append(pairs, fmt.Sprintf("%s %s", x, ty))
+				}
+				if len(pairs) == 0 {
+					return ""
+				}
+				return strings.Join(pairs, ", ")
+			}()
+			return fmt.Sprintf("func(%s) (%s)", args, result)
 		}
 		log.Println("parse error: unknown type")
 		return "any" // parse error
