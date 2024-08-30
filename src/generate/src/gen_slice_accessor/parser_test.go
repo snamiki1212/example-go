@@ -14,14 +14,12 @@ func Test_parser(t *testing.T) {
 		src       string
 		arguments arguments
 	}
-	tests := []struct {
-		name    string
+	tests := map[string]struct {
 		args    args
 		want    data
 		wantErr bool
 	}{
-		{
-			name: "ok",
+		"ok": {
 			args: args{
 				arguments: arguments{entity: "User", slice: "Users"},
 				src: `
@@ -39,8 +37,7 @@ type User struct {
 				fields:    fields{{Name: "UserID", Type: "string"}, {Name: "Age", Type: "int64"}},
 			},
 		},
-		{
-			name: "ok: callback",
+		"ok: callback": {
 			args: args{
 				arguments: arguments{entity: "User", slice: "Users"},
 				src: `
@@ -67,8 +64,7 @@ type User struct {
 				},
 			},
 		},
-		{
-			name: "ok: exclude fields",
+		"ok: exclude fields": {
 			args: args{
 				arguments: arguments{entity: "User", slice: "Users", fieldNamesToExclude: []string{"Age"}},
 				src: `
@@ -86,8 +82,7 @@ type User struct {
 				fields:    fields{{Name: "UserID", Type: "string"}},
 			},
 		},
-		{
-			name: "ng: invalid src code: syntax error",
+		"ng: invalid src code: syntax error": {
 			args: args{
 				arguments: arguments{entity: "User", slice: "Users"},
 				src: `
@@ -101,8 +96,7 @@ hogehoge // syntax error
 			},
 			wantErr: true,
 		},
-		{
-			name: "ng: invalid src code: not found package name",
+		"ng: invalid src code: not found package name": {
 			args: args{
 				arguments: arguments{entity: "User", slice: "Users"},
 				src: `
@@ -114,8 +108,7 @@ type User struct {
 			},
 			wantErr: true,
 		},
-		{
-			name: "ng: invalid arguments: not found entity",
+		"ng: invalid arguments: not found entity": {
 			args: args{
 				arguments: arguments{entity: "INVALID_ENTITY", slice: "Users"},
 				src: `
@@ -128,11 +121,8 @@ type User struct {
 			wantErr: true,
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if tt.name != "ok: callback" {
-				t.Skip()
-			}
+	for tn, tt := range tests {
+		t.Run(tn, func(t *testing.T) {
 			reader := newReaderFromString(tt.args.src)
 			got, err := parse(tt.args.arguments, reader)
 			if tt.wantErr {
