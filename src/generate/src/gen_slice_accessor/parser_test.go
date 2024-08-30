@@ -30,14 +30,20 @@ package user
 type User struct {
 	UserID string
 	Age    int64
-	callback func(x string, x2 bool) (y int64, y2 int32)
+	callback1 func(x string, x2 bool) (y int64, y2 int32)
+	callback2 func(string, bool) (int64, int32)
 }
 `,
 			},
 			want: data{
 				pkgName:   "user",
 				sliceName: "Users",
-				fields:    fields{{Name: "UserID", Type: "string"}, {Name: "Age", Type: "int64"}, {Name: "callback", Type: "func(x string, x2 bool) (y int64, y2 int32)"}},
+				fields: fields{
+					{Name: "UserID", Type: "string"},
+					{Name: "Age", Type: "int64"},
+					{Name: "callback1", Type: "func(x string, x2 bool) (y int64, y2 int32)"},
+					{Name: "callback2", Type: "func(string, bool) (int64, int32)"},
+				},
 			},
 		},
 		{

@@ -85,7 +85,7 @@ type (
 
 // Constructor for field.
 func newField(raw *ast.Field) field {
-	name := raw.Names[0].Name
+	name := getName(raw)
 	typeName := func() string {
 		switch tt := raw.Type.(type) {
 		case *ast.Ident:
@@ -96,9 +96,8 @@ func newField(raw *ast.Field) field {
 			args := func() string {
 				var pairs []string
 				for _, p := range tt.Params.List {
-					x := p.Names[0].Name
-					ty := p.Type.(*ast.Ident).Name
-					pairs = append(pairs, fmt.Sprintf("%s %s", x, ty))
+					f := newField(p)
+					pairs = append(pairs, f.Display())
 				}
 				if len(pairs) == 0 {
 					return ""
@@ -108,9 +107,8 @@ func newField(raw *ast.Field) field {
 			result := func() string {
 				var pairs []string
 				for _, p := range tt.Results.List {
-					x := p.Names[0].Name
-					ty := p.Type.(*ast.Ident).Name
-					pairs = append(pairs, fmt.Sprintf("%s %s", x, ty))
+					f := newField(p)
+					pairs = append(pairs, f.Display())
 				}
 				if len(pairs) == 0 {
 					return ""
@@ -144,6 +142,20 @@ func (fs fields) exclude(targets []string) fields {
 	})
 }
 
+func (f field) Display() string {
+	if f.Name == "" {
+		return f.Type
+	}
+	return fmt.Sprintf("%s %s", f.Name, f.Type)
+}
+
 // Constructor for method name.
 // TODO: use pluralize package: https://github.com/gertd/go-pluralize
 func newMethodName(name string) string { return name + "s" }
+
+func getName(raw *ast.Field) string {
+	if len(raw.Names) == 0 {
+		return ""
+	}
+	return raw.Names[0].Name
+}
