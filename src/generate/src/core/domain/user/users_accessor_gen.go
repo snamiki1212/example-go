@@ -37,12 +37,3 @@ func (xs Users) PtrAges() []*int64 {
 	}
 	return sli
 }
-
-// callbacks
-func (xs Users) callbacks() []any {
-	sli := make([]any, 0, len(xs))
-	for i := range xs {
-		sli = append(sli, xs[i].callback)
-	}
-	return sli
-}
