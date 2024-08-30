@@ -85,37 +85,15 @@ type (
 
 // Constructor for field.
 func newField(raw *ast.Field) field {
-	name := getName(raw)
+	name := safeGetName(raw)
 	typeName := func() string {
 		switch tt := raw.Type.(type) {
 		case *ast.Ident:
-			return tt.Name
+			return parseIdent(tt)
 		case *ast.StarExpr:
-			return "*" + tt.X.(*ast.Ident).Name
+			return parseStarExpr(tt)
 		case *ast.FuncType:
-			args := func() string {
-				var pairs []string
-				for _, p := range tt.Params.List {
-					f := newField(p)
-					pairs = append(pairs, f.Display())
-				}
-				if len(pairs) == 0 {
-					return ""
-				}
-				return strings.Join(pairs, ", ")
-			}()
-			result := func() string {
-				var pairs []string
-				for _, p := range tt.Results.List {
-					f := newField(p)
-					pairs = append(pairs, f.Display())
-				}
-				if len(pairs) == 0 {
-					return ""
-				}
-				return strings.Join(pairs, ", ")
-			}()
-			return fmt.Sprintf("func(%s) (%s)", args, result)
+			return parseFuncType(tt)
 		}
 		log.Println("parse error: unknown type")
 		return "any" // parse error
@@ -124,6 +102,39 @@ func newField(raw *ast.Field) field {
 		Name: name,
 		Type: typeName,
 	}
+}
+
+// Parse identifier.
+func parseIdent(x *ast.Ident) string {
+	return x.Name
+}
+
+// Parse star expression.
+func parseStarExpr(x *ast.StarExpr) string {
+	switch tt := x.X.(type) {
+	case *ast.Ident:
+		return "*" + tt.Name
+	default:
+		log.Println("parseStarExpr: parse error: unknown type")
+		return "any"
+	}
+}
+
+// Parse function type.
+func parseFuncType(x *ast.FuncType) string {
+	params := func() string {
+		if x != nil && x.Params != nil && x.Params.List != nil {
+			return newFields(x.Params.List).display()
+		}
+		return ""
+	}()
+	results := func() string {
+		if x != nil && x.Results != nil && x.Results.List != nil {
+			return newFields(x.Results.List).display()
+		}
+		return ""
+	}()
+	return fmt.Sprintf("func(%s) (%s)", params, results)
 }
 
 // Constructor for fields.
@@ -142,7 +153,20 @@ func (fs fields) exclude(targets []string) fields {
 	})
 }
 
-func (f field) Display() string {
+// Display fields.
+func (fs fields) display() string {
+	if len(fs) == 0 {
+		return ""
+	}
+	var pairs []string
+	for _, f := range fs {
+		pairs = append(pairs, f.display())
+	}
+	return strings.Join(pairs, ", ")
+}
+
+// Display field.
+func (f field) display() string {
 	if f.Name == "" {
 		return f.Type
 	}
@@ -153,7 +177,8 @@ func (f field) Display() string {
 // TODO: use pluralize package: https://github.com/gertd/go-pluralize
 func newMethodName(name string) string { return name + "s" }
 
-func getName(raw *ast.Field) string {
+// Get field name safely.
+func safeGetName(raw *ast.Field) string {
 	if len(raw.Names) == 0 {
 		return ""
 	}
