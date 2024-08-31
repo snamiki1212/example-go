@@ -86,22 +86,27 @@ type (
 // Constructor for field.
 func newField(raw *ast.Field) field {
 	name := safeGetName(raw)
-	typeName := func() string {
-		switch tt := raw.Type.(type) {
-		case *ast.Ident:
-			return parseIdent(tt)
-		case *ast.StarExpr:
-			return parseStarExpr(tt)
-		case *ast.FuncType:
-			return parseFuncType(tt)
-		}
-		log.Println("parse error: unknown type")
-		return "any" // parse error
-	}()
+	ty := parseExpr(raw.Type)
 	return field{
 		Name: name,
-		Type: typeName,
+		Type: ty,
 	}
+}
+
+// Parse expression.
+func parseExpr(x ast.Expr) string {
+	switch tt := x.(type) {
+	case *ast.Ident:
+		return parseIdent(tt)
+	case *ast.StarExpr:
+		return parseStarExpr(tt)
+	case *ast.FuncType:
+		return parseFuncType(tt)
+	case *ast.Ellipsis:
+		return parseEllipsis(tt)
+	}
+	log.Println("parse error: unknown type")
+	return "any"
 }
 
 // Parse identifier.
@@ -135,6 +140,18 @@ func parseFuncType(x *ast.FuncType) string {
 		return ""
 	}()
 	return fmt.Sprintf("func(%s) (%s)", params, results)
+}
+
+// Parse ellipsis.
+func parseEllipsis(x *ast.Ellipsis) string {
+	str := parseExpr(x.Elt)
+	switch str {
+	case "any":
+		log.Println("parseEllipsis: parse error: unknown type")
+		return str
+	default:
+		return "..." + str
+	}
 }
 
 // Constructor for fields.

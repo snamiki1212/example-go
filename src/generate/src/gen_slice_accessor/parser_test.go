@@ -49,6 +49,7 @@ type User struct {
 	callback2 func(string, bool) (int64, int32)
 	callback3 func(u1 User) (u2 *User)
 	callback4 func(cb1 func(x1 string) (y1 int)) (cb2 func(x2 string) (y2 int))
+	callback5 func(head string, tail ...bool) (num int64)
 }
 `,
 			},
@@ -61,6 +62,7 @@ type User struct {
 					{Name: "callback2", Type: "func(string, bool) (int64, int32)"},
 					{Name: "callback3", Type: "func(u1 User) (u2 *User)"},
 					{Name: "callback4", Type: "func(cb1 func(x1 string) (y1 int)) (cb2 func(x2 string) (y2 int))"},
+					{Name: "callback5", Type: "func(head string, tail ...bool) (num int64)"},
 				},
 			},
 		},
