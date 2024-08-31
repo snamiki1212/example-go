@@ -1,3 +1,7 @@
+> [!NOTE]  
+> Created geenrator as package in following link.
+> [GitHub - snamiki1212/gen-slice-accessor](https://github.com/snamiki1212/gen-slice-accessor)
+
 ## generate
 
 ```zsh

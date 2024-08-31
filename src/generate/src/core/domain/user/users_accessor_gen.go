@@ -37,3 +37,21 @@ func (xs Users) PtrAges() []*int64 {
 	}
 	return sli
 }
+
+// callback5s
+func (xs Users) callback5s() []func(head string, tail ...bool) (num int64) {
+	sli := make([]func(head string, tail ...bool) (num int64), 0, len(xs))
+	for i := range xs {
+		sli = append(sli, xs[i].callback5)
+	}
+	return sli
+}
+
+// callback6s
+func (xs Users) callback6s() []func(head string, tail ...func(x1 string) (y1 string)) (num int64) {
+	sli := make([]func(head string, tail ...func(x1 string) (y1 string)) (num int64), 0, len(xs))
+	for i := range xs {
+		sli = append(sli, xs[i].callback6)
+	}
+	return sli
+}
