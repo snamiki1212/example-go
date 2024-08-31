@@ -19,10 +19,10 @@ func (xs {{ .Slice }}) {{ .Method }}() []{{ .Type }} {
 
 // Replace variable from key to value in template.
 type templateMapper struct {
-	Slice  string
-	Method string
-	Type   string
-	Field  string
+	Slice  string // Slice name (ex. Users).
+	Method string // Method name (ex. UserIDs).
+	Type   string // Type name of field (ex. string).
+	Field  string // Field name of struct (ex. UserID).
 }
 
 // Generate code
