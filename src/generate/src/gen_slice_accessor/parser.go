@@ -13,23 +13,23 @@ import (
 // Parse sorce code to own struct.
 func parse(args arguments, reader func(path string) (*ast.File, error)) (data, error) {
 	// Convert source code to ast
-	node, err := reader(args.input)
+	file, err := reader(args.input)
 	if err != nil {
 		return data{}, fmt.Errorf("parse error: %w", err)
 	}
 
 	// Parse ast
-	astFs, err := doParse(node, args)
+	fields, err := parseFile(file, args)
 	if err != nil {
 		return data{}, err
 	}
 
 	// Convert ast to own struct
-	fs := newFields(astFs).exclude(args.fieldNamesToExclude)
+	fs := newFields(fields).exclude(args.fieldNamesToExclude)
 
 	return data{
 		fields:    fs,
-		pkgName:   getPackageName(node),
+		pkgName:   getPackageNameFromFile(file),
 		sliceName: args.slice,
 	}, nil
 }
@@ -41,29 +41,29 @@ func reader(path string) (*ast.File, error) {
 }
 
 // Get package name.
-func getPackageName(node *ast.File) string { return node.Name.Name }
+func getPackageNameFromFile(node *ast.File) string { return node.Name.Name }
 
-// Parse ast.
-func doParse(node *ast.File, args arguments) ([]*ast.Field, error) {
-	objs := node.Scope.Objects
-	obj, ok := objs[args.entity]
+// Parse file.
+func parseFile(node *ast.File, args arguments) ([]*ast.Field, error) {
+	// Find entity object
+	obj, ok := node.Scope.Objects[args.entity]
 	if !ok {
 		return nil, fmt.Errorf("entity not found: %s", args.entity)
 	}
 
-	decl := obj.Decl
-	entity, ok := decl.(*ast.TypeSpec)
+	// Find entity
+	entity, ok := obj.Decl.(*ast.TypeSpec)
 	if !ok {
 		return nil, fmt.Errorf("invalid entity: %s", args.entity)
 	}
-	ty := entity.Type
 
-	// https://stackoverflow.com/questions/20234342/get-a-simple-string-representation-of-a-struct-field-s-type
-	sty, ok := ty.(*ast.StructType)
+	// Find fields
+	str, ok := entity.Type.(*ast.StructType)
 	if !ok {
-		return nil, fmt.Errorf("invalid type: %T", ty)
+		return nil, fmt.Errorf("invalid type: %T", str)
 	}
-	fs := sty.Fields.List
+	fs := str.Fields.List
+
 	return fs, nil
 }
 
@@ -85,7 +85,7 @@ type (
 
 // Constructor for field.
 func newField(raw *ast.Field) field {
-	name := safeGetName(raw)
+	name := safeGetNameFromField(raw)
 	ty := parseExpr(raw.Type)
 	return field{
 		Name: name,
@@ -195,7 +195,7 @@ func (f field) display() string {
 func newMethodName(name string) string { return name + "s" }
 
 // Get field name safely.
-func safeGetName(raw *ast.Field) string {
+func safeGetNameFromField(raw *ast.Field) string {
 	if len(raw.Names) == 0 {
 		return ""
 	}
