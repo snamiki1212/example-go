@@ -33,6 +33,45 @@ func main() {
 	}
 
 	{
+		fmt.Println("変数の取り出し")
+		code := `1 + Num + mofu.hoge.piyo + generic_field.key1_ValueColumn + generic_field.key2_LookupAccount.age + generic_field.key3_LookupCustomer.age + generic_field.key4_LookupColumn.key4_1_ValueColumn`
+
+		env := map[string]any{
+			"Num": 20,
+			"mofu": map[string]any{
+				"hoge": map[string]any{
+					"piyo": 300,
+				},
+			},
+
+			"generic_field": map[string]any{
+				"key1_ValueColumn": 4_000,
+				"key2_LookupAccount": map[string]any{
+					"age": 50_000,
+				},
+				"key3_LookupCustomer": map[string]any{
+					"age": 600_000,
+				},
+				"key4_LookupColumn": map[string]any{
+					"key4_1_ValueColumn": 7_000_000,
+				},
+			},
+		}
+		program, err := expr.Compile(code, expr.Env(env))
+		if err != nil {
+			panic(err)
+		}
+
+		output, err := expr.Run(program, env)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println(code, "=>", output)
+		fmt.Println()
+	}
+
+	{
 		fmt.Println("if文")
 		code := `1 + (2 == 2 ? 100 : 0)`
 
