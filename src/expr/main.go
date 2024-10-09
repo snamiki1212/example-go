@@ -119,7 +119,7 @@ func main() {
 	}
 
 	{
-		fmt.Println("割り算の部分でゼロ除算したらどうなるか")
+		fmt.Println("[除法]割り算の部分でゼロ除算したらどうなるか")
 		code := `1 + (0 / 0) + 10`
 
 		type Env struct {
@@ -130,6 +130,32 @@ func main() {
 		}
 
 		env := Env{}
+		output, err := expr.Run(program, env)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println(code, "=>", output)
+		fmt.Println()
+	}
+
+	{
+		fmt.Println("[除法] 0 safe")
+		code := `100 + div(0, 0) + 10`
+
+		env := map[string]any{
+			"div": func(x1 int, x2 int) int {
+				if x2 == 0 {
+					return 0
+				}
+				return x1 / x2
+			},
+		}
+		program, err := expr.Compile(code, expr.Env(env))
+		if err != nil {
+			panic(err)
+		}
+
 		output, err := expr.Run(program, env)
 		if err != nil {
 			panic(err)
